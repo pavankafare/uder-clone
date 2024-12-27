@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import { connectToDb } from "./db/db.js";
 import userRoutes from "./routes/user.route.js";
 dotenv.config();
@@ -11,6 +12,7 @@ connectToDb();
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 app.use(
   express.urlencoded({
     extended: true,
