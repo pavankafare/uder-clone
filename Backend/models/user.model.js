@@ -42,4 +42,4 @@ userSchema.statics.hashPassword = async function (password) {
   return await bcrypt.hash(password, 10);
 };
 
-export const userModel = mongoose.model("User", userSchema);
+export const userModel = mongoose.model("user", userSchema);
