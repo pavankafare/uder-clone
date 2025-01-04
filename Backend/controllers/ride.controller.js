@@ -13,8 +13,9 @@ import {
   getCaptainsInTheRadius,
   getDistanceTime,
 } from "../services/maps.service.js";
-// const { sendMessageToSocketId } = require("../socket");
+import { sendMessageToSocketId } from "../socket.js";
 import { rideModel } from "../models/ride.model.js";
+import { captainModel } from "../models/captain.model.js";
 
 export const createRides = async (req, res) => {
   const errors = validationResult(req);
@@ -34,25 +35,43 @@ export const createRides = async (req, res) => {
     res.status(201).json(ride);
 
     const pickupCoordinates = await getAddressCoordinate(pickup);
+    // console.log(pickupCoordinates);
+
+    const getCaptainsInTheRadius = async (ltd, lng, radius) => {
+      // radius in km
+
+      const captains = await captainModel.find({
+        location: {
+          $geoWithin: {
+            $centerSphere: [[ltd, lng], radius / 6371],
+          },
+        },
+      });
+
+      console.log(captains);
+      return captains;
+    };
 
     const captainsInRadius = await getCaptainsInTheRadius(
       pickupCoordinates.ltd,
       pickupCoordinates.lng,
-      2
+      3
     );
+    console.log("capR" + captainsInRadius);
 
     ride.otp = "";
 
     const rideWithUser = await rideModel
       .findOne({ _id: ride._id })
       .populate("user");
+    // console.log("rideU"+rideWithUser);
 
-    // captainsInRadius.map((captain) => {
-    //   sendMessageToSocketId(captain.socketId, {
-    //     event: "new-ride",
-    //     data: rideWithUser,
-    //   });
-    // });
+    captainsInRadius.map((captain) => {
+      sendMessageToSocketId(captain.socketId, {
+        event: "new-ride",
+        data: rideWithUser,
+      });
+    });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: err.message });
@@ -116,7 +135,7 @@ export const startRides = async (req, res) => {
       captain: req.captain,
     });
 
-    console.log(ride);
+    // console.log(ride);
 
     sendMessageToSocketId(ride.user.socketId, {
       event: "ride-started",
