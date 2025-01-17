@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import ConfirmRide from '../components/ConfirmRide';
 import LookingForDriver from '../components/LookingForDriver';
 import WaitingForDriver from '../components/WaitingForDriver';
+import LiveTracking from '../components/LiveTracking';
 // import LiveTracking from '../components/LiveTracking';
 
 const Home = () => {
@@ -47,19 +48,19 @@ const Home = () => {
         socket.emit("join", { userType: "user", userId: user._id })
     }, [user])
 
-    // socket.on('ride-confirmed', ride => {
+    socket.on('ride-confirmed', ride => {
 
 
-    //     setVehicleFound(false)
-    //     setWaitingForDriver(true)
-    //     setRide(ride)
-    // })
+        setVehicleFound(false)
+        setWaitingForDriver(true)
+        setRide(ride)
+    })
 
-    // socket.on('ride-started', ride => {
-    //     console.log("ride")
-    //     setWaitingForDriver(false)
-    //     navigate('/riding', { state: { ride } }) // Updated navigate to include ride data
-    // })
+    socket.on('ride-started', ride => {
+        console.log("ride")
+        setWaitingForDriver(false)
+        navigate('/riding', { state: { ride } }) // Updated navigate to include ride data
+    })
 
 
     const handlePickupChange = async (e) => {
@@ -205,8 +206,8 @@ const Home = () => {
             <img className='w-16 absolute left-5 top-5' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" />
             <div className='h-screen w-screen'>
                 {/* image for temporary use  */}
-                {/* <LiveTracking /> */}
-                <img className="h-full w-full object-cover" src="https://forumstatic.oneplusmobile.com/opforum-gl/upload/image/front/thread/20220615/3619013/1089262898809143305/1089262898809143305.jpg" alt="" />
+                <LiveTracking />
+                {/* <img className="h-full w-full object-cover" src="https://forumstatic.oneplusmobile.com/opforum-gl/upload/image/front/thread/20220615/3619013/1089262898809143305/1089262898809143305.jpg" alt="" /> */}
 
             </div>
             <div className=' flex flex-col justify-end h-screen absolute top-0 w-full'>
