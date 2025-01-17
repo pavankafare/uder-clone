@@ -37,20 +37,20 @@ export const createRides = async (req, res) => {
     const pickupCoordinates = await getAddressCoordinate(pickup);
     // console.log(pickupCoordinates);
 
-    // const getCaptainsInTheRadius = async (ltd, lng, radius) => {
-    //   // radius in km
+    const getCaptainsInTheRadius = async (ltd, lng, radius) => {
+      // radius in km
 
-    //   const captains = await captainModel.find({
-    //     location: {
-    //       $geoWithin: {
-    //         $centerSphere: [[ltd, lng], radius / 6371],
-    //       },
-    //     },
-    //   });
+      const captains = await captainModel.find({
+        location: {
+          $geoWithin: {
+            $centerSphere: [[ltd, lng], radius / 6371],
+          },
+        },
+      });
 
-    //   console.log(captains);
-    //   return captains;
-    // };
+      console.log(captains);
+      return captains;
+    };
 
     const captainsInRadius = await getCaptainsInTheRadius(
       pickupCoordinates.ltd,
